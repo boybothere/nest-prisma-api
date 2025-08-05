@@ -1,16 +1,17 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
 import { LoginUserType } from './types/login-user.types';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from 'generated/prisma';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
     constructor(
         private prisma: PrismaService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private configService: ConfigService,
     ) { }
 
     async createUser(data: Prisma.UserCreateInput) {
@@ -83,7 +84,7 @@ export class AuthService {
         }
 
         return this.jwtService.sign(payload, {
-            secret: 'login_secret',
+            secret: this.configService.get<string>('JWT_SECRET')!,
             expiresIn: '30m',
         })
     }
@@ -96,7 +97,7 @@ export class AuthService {
         }
 
         return this.jwtService.sign(payload, {
-            secret: 'refresh_secret',
+            secret: this.configService.get<string>('REFRESH_SECRET')!,
             expiresIn: '7d',
         })
     }

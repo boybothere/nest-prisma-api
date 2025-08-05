@@ -2,15 +2,22 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { UserSettingService } from './user-setting/user-setting.service';
 import { UserSettingModule } from './user-setting/user-setting.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
-
+import { ConfigModule } from '@nestjs/config';
+import * as joi from 'joi';
 
 @Module({
-  imports: [UsersModule, UserSettingModule, PrismaModule, AuthModule],
+  imports: [UsersModule, UserSettingModule, PrismaModule, AuthModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: joi.object({
+        JWT_SECRET: joi.string().required(),
+      })
+    })
+  ],
   controllers: [AppController],
-  providers: [AppService, UserSettingService],
+  providers: [AppService],
 })
 export class AppModule { }

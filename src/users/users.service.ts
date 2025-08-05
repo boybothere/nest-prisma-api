@@ -37,7 +37,7 @@ export class UsersService {
         }
 
         await this.prisma.user.update({ where: { id }, data })
-        return { message: "Username updated successfully" }
+        return { message: "User details updated successfully" }
     }
 
     async deleteUserById(id: number) {
@@ -46,6 +46,11 @@ export class UsersService {
             include: { userSetting: true },
         })
         if (!user) throw new NotFoundException(`User with given ID ${id} doesn't exist`)
+        if (user.userSetting) {
+            await this.prisma.userSetting.delete({
+                where: { userId: id },
+            });
+        }
         await this.prisma.user.delete({ where: { id } })
         return { message: "User deleted successfully" };
 
