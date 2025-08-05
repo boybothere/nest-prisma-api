@@ -16,7 +16,8 @@ export class UsersService {
                         smsEnabled: true,
                         notificationsEnabled: true,
                     }
-                }
+                },
+                posts: true
             }
         })
         if (!user) throw new NotFoundException(`User with ID ${id} not found`)
@@ -43,7 +44,7 @@ export class UsersService {
     async deleteUserById(id: number) {
         const user = await this.prisma.user.findUnique({
             where: { id },
-            include: { userSetting: true },
+            include: { userSetting: true, posts: true },
         })
         if (!user) throw new NotFoundException(`User with given ID ${id} doesn't exist`)
         if (user.userSetting) {
@@ -51,6 +52,12 @@ export class UsersService {
                 where: { userId: id },
             });
         }
+        if (user.posts) {
+            await this.prisma.post.deleteMany({
+                where: { userId: id },
+            });
+        }
+
         await this.prisma.user.delete({ where: { id } })
         return { message: "User deleted successfully" };
 

@@ -20,6 +20,7 @@ model User {
   password    String       @default("temp123")
   displayName String?      @default("")
   userSetting UserSetting?
+  posts       Post[]
 }
 
 model UserSetting {
@@ -34,4 +35,6 @@ model Post {
   id          Int    @id @default(autoincrement())
   title       String
   description String
+  user        User   @relation(fields: [userId], references: [id])
+  userId      Int
 }

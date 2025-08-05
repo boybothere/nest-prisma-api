@@ -33,6 +33,7 @@ export class AuthService {
             },
             include: {
                 userSetting: true,
+                posts: true,
             }
         })
         const { password, ...userDetails } = newUser

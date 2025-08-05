@@ -6,6 +6,7 @@ import { UserSettingModule } from './user-setting/user-setting.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { PostsModule } from './posts/posts.module';
 import * as joi from 'joi';
 
 @Module({
@@ -15,7 +16,9 @@ import * as joi from 'joi';
       validationSchema: joi.object({
         JWT_SECRET: joi.string().required(),
       })
-    })
+    }),
+    PostsModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],
