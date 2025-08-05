@@ -17,6 +17,7 @@ datasource db {
 model User {
   id          Int          @id @default(autoincrement())
   username    String       @unique
+  password    String       @default("temp123")
   displayName String?      @default("")
   userSetting UserSetting?
 }

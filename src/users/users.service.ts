@@ -2,30 +2,10 @@ import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestj
 import { Prisma } from 'generated/prisma';
 import { PrismaService } from 'src/prisma/prisma.service';
 
+
 @Injectable()
 export class UsersService {
     constructor(private prisma: PrismaService) { }
-    async createUser(data: Prisma.UserCreateInput) {
-        const user = await this.prisma.user.findUnique({
-            where: { username: data.username }
-        })
-        if (user) throw new HttpException('Username already taken', HttpStatus.BAD_REQUEST)
-        return await this.prisma.user.create({
-            data: {
-                ...data,
-                userSetting: {
-                    create: {
-                        smsEnabled: true,
-                        notificationsEnabled: false,
-                    }
-                }
-            }
-        })
-    }
-
-    async getUsers() {
-        return await this.prisma.user.findMany({ include: { userSetting: true } })
-    }
 
     async getUsersById(id: number) {
         const user = await this.prisma.user.findUnique({
@@ -40,7 +20,8 @@ export class UsersService {
             }
         })
         if (!user) throw new NotFoundException(`User with ID ${id} not found`)
-        return user
+        const { password, ...rest } = user
+        return rest
     }
 
 
@@ -60,7 +41,10 @@ export class UsersService {
     }
 
     async deleteUserById(id: number) {
-        const user = await this.getUsersById(id)
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+            include: { userSetting: true },
+        })
         if (!user) throw new NotFoundException(`User with given ID ${id} doesn't exist`)
         await this.prisma.user.delete({ where: { id } })
         return { message: "User deleted successfully" };
