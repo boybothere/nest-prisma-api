@@ -31,10 +31,10 @@ export class AuthService {
                     }
                 }
             },
-            // include: {
-            //     userSetting: true,
-            //     posts: true,
-            // }
+            include: {
+                userSetting: true,
+                posts: true,
+            }
         })
         const { password, ...userDetails } = newUser
         return {
@@ -81,7 +81,7 @@ export class AuthService {
         const payload = {
             sub: user.id,
             username: user.username,
-            displayName: user.displayName ? user.displayName : ""
+            displayName: user.displayName ?? ""
         }
 
         return this.jwtService.sign(payload, {
@@ -94,7 +94,7 @@ export class AuthService {
         const payload = {
             sub: user.id,
             username: user.username,
-            displayName: user.displayName ? user.displayName : ""
+            displayName: user.displayName ?? ""
         }
 
         return this.jwtService.sign(payload, {
