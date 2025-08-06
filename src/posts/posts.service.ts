@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -17,7 +17,8 @@ export class PostsService {
         return newPost
     }
 
-    async getMyPosts(id: number) {
+    async getMyPosts(id: number, user: any) {
+        if (id !== user.id) throw new UnauthorizedException("Unauthorized access")
         const posts = await this.prisma.post.findMany({
             where: { userId: id }
         })

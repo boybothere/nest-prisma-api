@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Req, UseGuards
 import { CreatePostDto } from './dtos/create-post.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { PostsService } from './posts.service';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
 @Controller('posts')
 export class PostsController {
@@ -9,14 +10,14 @@ export class PostsController {
 
     @UseGuards(JwtAuthGuard)
     @Post('create')
-    async createPost(@Body() createPostDto: CreatePostDto, @Req() req: any) {
-        return await this.postsService.createPost(createPostDto, req.user.id)
+    async createPost(@Body() createPostDto: CreatePostDto, @CurrentUser() user) {
+        return await this.postsService.createPost(createPostDto, user.id)
     }
 
     @UseGuards(JwtAuthGuard)
     @Get(':id/my-posts')
-    async getMyPosts(@Param('id', ParseIntPipe) id: number) {
-        return await this.postsService.getMyPosts(id)
+    async getMyPosts(@Param('id', ParseIntPipe) id: number, @CurrentUser() user) {
+        return await this.postsService.getMyPosts(id, user)
     }
 
 }

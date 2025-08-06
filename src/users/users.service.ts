@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Prisma } from 'generated/prisma';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -7,7 +7,16 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class UsersService {
     constructor(private prisma: PrismaService) { }
 
-    async getUsersById(id: number) {
+    async getUserToValidate(id: number) {
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+        })
+        if (!user) throw new NotFoundException(`User with ID ${id} not found`)
+        const { password, ...rest } = user
+        return rest
+    }
+    async getUsersById(id: number, userFromRequest: any) {
+        if (id !== userFromRequest.id) throw new UnauthorizedException("Unauthorized access")
         const user = await this.prisma.user.findUnique({
             where: { id },
             include: {
@@ -27,8 +36,9 @@ export class UsersService {
 
 
 
-    async updateUsernameById(id: number, data: Prisma.UserUpdateInput) {
-        const user = await this.getUsersById(id)
+    async updateUsernameById(id: number, data: Prisma.UserUpdateInput, userFromRequest: any) {
+        if (id !== userFromRequest.id) throw new UnauthorizedException("Unauthorized access")
+        const user = await this.getUsersById(id, userFromRequest)
         if (!user) throw new NotFoundException(`User with given ID ${id} doesn't exist`)
         if (data.username) {
             const findUser = await this.prisma.user.findUnique({
@@ -41,7 +51,8 @@ export class UsersService {
         return { message: "User details updated successfully" }
     }
 
-    async deleteUserById(id: number) {
+    async deleteUserById(id: number, userFromRequest: any) {
+        if (id !== userFromRequest.id) throw new UnauthorizedException("Unauthorized access")
         const user = await this.prisma.user.findUnique({
             where: { id },
             include: { userSetting: true, posts: true },

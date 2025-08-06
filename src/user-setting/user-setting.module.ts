@@ -8,7 +8,7 @@ import { JwtStrategy } from 'src/auth/stratigies/jwt.strategy';
 
 @Module({
   controllers: [UserSettingController],
-  imports: [UsersModule, PrismaModule, AuthModule],
+  imports: [UsersModule, PrismaModule],
   providers: [UserSettingService, JwtStrategy]
 })
 export class UserSettingModule { }
