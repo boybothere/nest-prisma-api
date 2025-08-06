@@ -3,6 +3,7 @@ import { CreatePostDto } from './dtos/create-post.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { PostsService } from './posts.service';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { CreateGroupPostDto } from './dtos/create-group-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -20,4 +21,10 @@ export class PostsController {
         return await this.postsService.getMyPosts(id, user)
     }
 
+
+    @Post(':id/create-group-post')
+    createGroupPost(@Body() createGroupPostDto: CreateGroupPostDto) {
+        console.log('Received DTO:', createGroupPostDto);
+        return this.postsService.createGroupPost(createGroupPostDto)
+    }
 }

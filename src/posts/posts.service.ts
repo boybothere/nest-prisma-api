@@ -24,4 +24,17 @@ export class PostsService {
         })
         return posts
     }
+
+    async createGroupPost(data: any) {
+        const { usersId, ...postData } = data
+        const newGroupPost = await this.prisma.groupPosts.create({
+            data: {
+                ...postData
+            },
+            include: {
+                users: true
+            }
+        })
+        return newGroupPost
+    }
 }
