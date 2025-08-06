@@ -17,7 +17,7 @@ datasource db {
 model User {
   id          Int          @id @default(autoincrement())
   username    String       @unique
-  password    String       @default("temp123")
+  password    String
   displayName String?      @default("")
   userSetting UserSetting?
   posts       Post[]

@@ -22,8 +22,8 @@ export class AuthService {
         const newUser = await this.prisma.user.create({
             data: {
                 username: data.username,
-                password: await this.hashPassword(data.password!),
-                displayName: data.displayName ? data.displayName : "",
+                password: await this.hashPassword(data.password),
+                displayName: data.displayName ?? "",
                 userSetting: {
                     create: {
                         notificationsEnabled: true,
@@ -31,10 +31,10 @@ export class AuthService {
                     }
                 }
             },
-            include: {
-                userSetting: true,
-                posts: true,
-            }
+            // include: {
+            //     userSetting: true,
+            //     posts: true,
+            // }
         })
         const { password, ...userDetails } = newUser
         return {
