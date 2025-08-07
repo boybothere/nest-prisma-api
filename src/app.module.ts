@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { PostsModule } from './posts/posts.module';
 import * as joi from 'joi';
+import { UserIdExistsConstraint } from './posts/validators/validate-user.validator';
 
 @Module({
   imports: [UsersModule, UserSettingModule, PrismaModule, AuthModule,
@@ -18,7 +19,6 @@ import * as joi from 'joi';
       })
     }),
     PostsModule,
-
   ],
   controllers: [AppController],
   providers: [AppService],

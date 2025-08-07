@@ -1,4 +1,5 @@
 import { ArrayNotEmpty, IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { ValidateUserId } from "../decorators/validate-user.decorator";
 
 export class CreateGroupPostDto {
 
@@ -13,5 +14,6 @@ export class CreateGroupPostDto {
     @IsArray()
     @ArrayNotEmpty()
     @IsNumber({}, { each: true })
+    @ValidateUserId()
     usersId: number[];
 }
