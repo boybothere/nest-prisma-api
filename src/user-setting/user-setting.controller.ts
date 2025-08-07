@@ -8,14 +8,6 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 export class UserSettingController {
     constructor(private userSettingService: UserSettingService) { }
 
-
-    @Get('profile')
-    @UseGuards(JwtAuthGuard)
-    getProfile(@Req() req) {
-        return req.user;  // 👈 This is the object returned from validate()
-    }
-
-
     @UseGuards(JwtAuthGuard)
     @Patch(':id/settings')
     async updateUserSettingByUserId(@Param('id', ParseIntPipe) id: number,

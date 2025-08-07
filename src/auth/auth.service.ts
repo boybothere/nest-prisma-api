@@ -85,7 +85,7 @@ export class AuthService {
         }
 
         return this.jwtService.sign(payload, {
-            secret: this.configService.get<string>('JWT_SECRET')!,
+            secret: this.configService.get<string>('JWT_SECRET'),
             expiresIn: '30m',
         })
     }
@@ -98,7 +98,7 @@ export class AuthService {
         }
 
         return this.jwtService.sign(payload, {
-            secret: this.configService.get<string>('REFRESH_SECRET')!,
+            secret: this.configService.get<string>('REFRESH_SECRET'),
             expiresIn: '7d',
         })
     }
