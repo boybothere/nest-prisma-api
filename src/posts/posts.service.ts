@@ -30,11 +30,12 @@ export class PostsService {
     async createGroupPost(data: any, user: any, id: number) {
         if (id !== user.id) throw new UnauthorizedException('Unauthorized access')
         const { usersId, ...postData } = data
+        const allUserIds = [...usersId, user.id]
         const newGroupPost = await this.prisma.groupPosts.create({
             data: {
                 ...postData,
                 users: {
-                    create: usersId.map(userId => ({
+                    create: allUserIds.map(userId => ({
                         user: {
                             connect: {
                                 id: userId
