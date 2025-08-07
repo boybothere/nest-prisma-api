@@ -21,10 +21,11 @@ export class PostsController {
         return await this.postsService.getMyPosts(id, user)
     }
 
-
+    @UseGuards(JwtAuthGuard)
     @Post(':id/create-group-post')
-    createGroupPost(@Body() createGroupPostDto: CreateGroupPostDto) {
-        console.log('Received DTO:', createGroupPostDto);
-        return this.postsService.createGroupPost(createGroupPostDto)
+    createGroupPost(@Body() createGroupPostDto: CreateGroupPostDto,
+        @Param('id', ParseIntPipe) id: number,
+        @CurrentUser() user: any) {
+        return this.postsService.createGroupPost(createGroupPostDto, user, id)
     }
 }

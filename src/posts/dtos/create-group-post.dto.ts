@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateGroupPostDto {
 
@@ -10,6 +10,8 @@ export class CreateGroupPostDto {
     description: string;
 
 
-    @IsNumber()
-    usersId: number;
+    @IsArray()
+    @ArrayNotEmpty()
+    @IsNumber({}, { each: true })
+    usersId: number[];
 }

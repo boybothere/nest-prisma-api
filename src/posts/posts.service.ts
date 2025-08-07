@@ -1,4 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { create } from 'domain';
+import { connect } from 'http2';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -25,16 +27,36 @@ export class PostsService {
         return posts
     }
 
-    async createGroupPost(data: any) {
+    async createGroupPost(data: any, user: any, id: number) {
+        if (id !== user.id) throw new UnauthorizedException('Unauthorized access')
         const { usersId, ...postData } = data
         const newGroupPost = await this.prisma.groupPosts.create({
             data: {
-                ...postData
-            },
-            include: {
-                users: true
+                ...postData,
+                users: {
+                    create: usersId.map(userId => ({
+                        user: {
+                            connect: {
+                                id: userId
+                            }
+                        }
+                    }))
+                }
+            }, include: {
+                users: {
+                    select: {
+                        user: {
+                            select: {
+                                username: true,
+                                displayName: true,
+                            }
+                        }
+                    }
+                }
             }
         })
         return newGroupPost
     }
+
+
 }
