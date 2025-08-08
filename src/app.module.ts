@@ -8,7 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { PostsModule } from './posts/posts.module';
 import * as joi from 'joi';
-import { UserIdExistsConstraint } from './posts/validators/validate-user.validator';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { EventsModule } from 'events/event.module';
 
 @Module({
   imports: [UsersModule, UserSettingModule, PrismaModule, AuthModule,
@@ -19,6 +20,13 @@ import { UserIdExistsConstraint } from './posts/validators/validate-user.validat
       })
     }),
     PostsModule,
+    EventsModule,
+    EventEmitterModule.forRoot({
+      wildcard: false,
+      maxListeners: 10,
+      verboseMemoryLeak: true,
+      ignoreErrors: false,
+    })
   ],
   controllers: [AppController],
   providers: [AppService],

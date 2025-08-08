@@ -6,13 +6,15 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './stratigies/jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
+import { EventsModule } from 'events/event.module';
 
 @Module({
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
   imports: [UsersModule, PrismaModule,
     JwtModule.register({},
-    )
+    ),
+    EventsModule
   ],
   exports: [AuthService]
 })

@@ -5,6 +5,7 @@ import { Prisma } from 'generated/prisma';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { UserEventsService } from 'events/user-events.service';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +13,7 @@ export class AuthService {
         private prisma: PrismaService,
         private jwtService: JwtService,
         private configService: ConfigService,
+        private userEventService: UserEventsService
     ) { }
 
     async createUser(data: Prisma.UserCreateInput) {
@@ -36,6 +38,7 @@ export class AuthService {
                 posts: true,
             }
         })
+        this.userEventService.emitUserRegistered(newUser)
         const { password, ...userDetails } = newUser
         return {
             userDetails,
@@ -59,6 +62,7 @@ export class AuthService {
             ...tokens,
 
         }
+        this.userEventService.emitUserLogin(user)
         const { password, ...userDetails } = user
         return {
             userDetails,
