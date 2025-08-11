@@ -11,7 +11,7 @@ import * as joi from 'joi';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EventsModule } from 'events/event.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
-import { CacheModule } from '@nestjs/cache-manager';
+import { FileUploadModule } from './file-upload/file-upload.module';
 
 @Module({
   imports: [UsersModule, UserSettingModule, PrismaModule, AuthModule,
@@ -29,11 +29,7 @@ import { CacheModule } from '@nestjs/cache-manager';
       verboseMemoryLeak: true,
       ignoreErrors: false,
     }),
-    CacheModule.register({
-      isGlobal: true,
-      ttl: 30000,
-      max: 100,
-    })
+    FileUploadModule
   ],
   controllers: [AppController],
   providers: [AppService],
