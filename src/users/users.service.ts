@@ -55,21 +55,28 @@ export class UsersService {
         if (id !== userFromRequest.id) throw new UnauthorizedException("Unauthorized access")
         const user = await this.prisma.user.findUnique({
             where: { id },
-            include: { userSetting: true, posts: true },
+            include: { userSetting: true, posts: true, groupPosts: true },
         })
+        console.log(user)
         if (!user) throw new NotFoundException(`User with given ID ${id} doesn't exist`)
-        if (user.userSetting) {
+        await this.prisma.$transaction(async (tx) => {
             await this.prisma.userSetting.delete({
                 where: { userId: id },
             });
-        }
-        if (user.posts) {
-            await this.prisma.post.deleteMany({
-                where: { userId: id },
-            });
-        }
+            if (user.posts) {
+                await this.prisma.post.deleteMany({
+                    where: { userId: id },
+                });
+                if (user.groupPosts) {
+                    await this.prisma.usersToGroupPosts.deleteMany({
+                        where: { userId: id }
+                    })
+                }
+                await this.prisma.user.delete({ where: { id } })
+            }
+        })
 
-        await this.prisma.user.delete({ where: { id } })
+
         return { message: "User deleted successfully" };
 
     }

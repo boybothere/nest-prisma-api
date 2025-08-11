@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { create } from 'domain';
+import { User } from 'generated/prisma';
 import { connect } from 'http2';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -59,5 +60,15 @@ export class PostsService {
         return newGroupPost
     }
 
+    async getMyGroupPosts(id: number, user: User) {
+        if (id !== user.id) throw new UnauthorizedException('Unauthorized access')
+        const findGroupPostIds = await this.prisma.usersToGroupPosts.findMany({
+            where: { userId: id }
+        })
+        const postsIds = [...findGroupPostIds.map(post => post.groupPostId)]
+        return await this.prisma.groupPosts.findMany({
+            where: { id: { in: postsIds } }
+        })
+    }
 
 }

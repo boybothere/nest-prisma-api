@@ -28,4 +28,10 @@ export class PostsController {
         @CurrentUser() user: any) {
         return this.postsService.createGroupPost(createGroupPostDto, user, id)
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':id/my-group-posts')
+    async getMyGroupPosts(@Param('id', ParseIntPipe) id: number, @CurrentUser() user) {
+        return await this.postsService.getMyGroupPosts(id, user)
+    }
 }
