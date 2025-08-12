@@ -7,6 +7,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserEventsService } from 'events/user-events.service';
 import { MailService } from 'src/mail/mail.service';
+import { RegisterUserDto } from './dtos/register-user.dto';
+import { LoginUserDto } from './dtos/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +20,7 @@ export class AuthService {
         private mailService: MailService
     ) { }
 
-    async createUser(data: Prisma.UserCreateInput) {
+    async createUser(data: RegisterUserDto) {
         const user = await this.prisma.user.findUnique({
             where: { username: data.username }
         })
@@ -28,6 +30,7 @@ export class AuthService {
                 username: data.username,
                 password: await this.hashPassword(data.password),
                 displayName: data.displayName ?? "",
+                email: data.email,
                 userSetting: {
                     create: {
                         notificationsEnabled: true,
@@ -50,7 +53,7 @@ export class AuthService {
 
 
 
-    async loginUser(data: LoginUserType) {
+    async loginUser(data: LoginUserDto) {
         const findUser = await this.prisma.user.findUnique({
             where: { username: data.username },
             include: { userSetting: true }
