@@ -12,6 +12,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EventsModule } from 'events/event.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { FileUploadModule } from './file-upload/file-upload.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [UsersModule, UserSettingModule, PrismaModule, AuthModule,
@@ -29,7 +31,17 @@ import { FileUploadModule } from './file-upload/file-upload.module';
       verboseMemoryLeak: true,
       ignoreErrors: false,
     }),
-    FileUploadModule
+    FileUploadModule,
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        auth: {
+          user: process.env.email,
+          pass: process.env.pass
+        },
+      }
+    }),
+    MailModule
   ],
   controllers: [AppController],
   providers: [AppService],

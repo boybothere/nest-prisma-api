@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserEventsService } from 'events/user-events.service';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,8 @@ export class AuthService {
         private prisma: PrismaService,
         private jwtService: JwtService,
         private configService: ConfigService,
-        private userEventService: UserEventsService
+        private userEventService: UserEventsService,
+        private mailService: MailService
     ) { }
 
     async createUser(data: Prisma.UserCreateInput) {

@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './stratigies/jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
 import { EventsModule } from 'events/event.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   controllers: [AuthController],
@@ -14,7 +15,8 @@ import { EventsModule } from 'events/event.module';
   imports: [UsersModule, PrismaModule,
     JwtModule.register({},
     ),
-    EventsModule
+    EventsModule,
+    MailModule
   ],
   exports: [AuthService]
 })
