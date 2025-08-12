@@ -26,7 +26,8 @@ export class UsersService {
                         notificationsEnabled: true,
                     }
                 },
-                posts: true
+                posts: true,
+                files: true
             }
         })
         if (!user) throw new NotFoundException(`User with ID ${id} not found`)
@@ -55,10 +56,10 @@ export class UsersService {
         if (id !== userFromRequest.id) throw new UnauthorizedException("Unauthorized access")
         const user = await this.prisma.user.findUnique({
             where: { id },
-            include: { userSetting: true, posts: true, groupPosts: true },
+            include: { userSetting: true, posts: true, groupPosts: true, files: true },
         })
-        console.log(user)
         if (!user) throw new NotFoundException(`User with given ID ${id} doesn't exist`)
+
         await this.prisma.$transaction(async (tx) => {
             await this.prisma.userSetting.delete({
                 where: { userId: id },
@@ -69,6 +70,11 @@ export class UsersService {
                 });
                 if (user.groupPosts) {
                     await this.prisma.usersToGroupPosts.deleteMany({
+                        where: { userId: id }
+                    })
+                }
+                if (user.files) {
+                    await this.prisma.file.deleteMany({
                         where: { userId: id }
                     })
                 }
