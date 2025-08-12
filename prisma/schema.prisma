@@ -62,7 +62,7 @@ model File {
   id          String   @id @default(uuid())
   fileName    String
   mimeType    String
-  size        BigInt
+  size        Int
   url         String
   publicId    String
   description String?
