@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { LoginUserType } from './types/login-user.types';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from 'generated/prisma';
@@ -9,6 +9,7 @@ import { UserEventsService } from 'events/user-events.service';
 import { MailService } from 'src/mail/mail.service';
 import { RegisterUserDto } from './dtos/register-user.dto';
 import { LoginUserDto } from './dtos/login-user.dto';
+import { emailBodies } from 'src/common/email-bodies/email-bodies';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +20,7 @@ export class AuthService {
         private userEventService: UserEventsService,
         private mailService: MailService
     ) { }
-
+    private readonly logger = new Logger('EmailForRegistration')
     async createUser(data: RegisterUserDto) {
         const user = await this.prisma.user.findUnique({
             where: { username: data.username }
@@ -45,6 +46,13 @@ export class AuthService {
         })
         this.userEventService.emitUserRegistered(newUser)
         const { password, ...userDetails } = newUser
+        this.mailService.sendEmail(userDetails.email,
+            userDetails.username,
+            "Registration Notification",
+            emailBodies.register.text,
+            emailBodies.register.msg
+        )
+        this.logger.log(`Registration email send to ${userDetails.email}`)
         return {
             userDetails,
             message: "User registered successfully"
@@ -69,6 +77,13 @@ export class AuthService {
         }
         this.userEventService.emitUserLogin(user)
         const { password, ...userDetails } = user
+        this.mailService.sendEmail(userDetails.email,
+            userDetails.username,
+            "Login Notification",
+            emailBodies.login.text,
+            emailBodies.login.msg
+        )
+        this.logger.log(`Login email send to ${userDetails.email}`)
         return {
             userDetails,
             message: "User logged in successfully"

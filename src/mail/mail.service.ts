@@ -15,14 +15,15 @@ export class MailService {
         })
     }
 
-    async sendRegisterEmail(to: string, username: string) {
+    async sendEmail(to: string, username: string, subject: string, text: string, msg: string) {
+        const html = `<h3>Welcome ${username}</h3>` + msg
         await this.transporter.sendMail({
             from: `"NestJs Backend" <process.env.email>`,
             to,
-            subject: 'Register Notification',
-            text: `Hello ${username}, your account usage is just a login away!`,
-            html: `<p>Welcome, <strong>${username}</strong></p>
-                    <p>Your account has been successfully created!</p>`
+            subject,
+            text,
+            html
         })
     }
+
 }
