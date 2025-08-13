@@ -27,6 +27,11 @@ export class UsersService {
                     }
                 },
                 posts: true,
+                groupPosts: {
+                    select: {
+                        groupPost: true
+                    }
+                },
                 files: true
             }
         })
